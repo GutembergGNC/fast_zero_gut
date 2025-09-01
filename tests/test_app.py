@@ -10,7 +10,7 @@ def test_root_deve_retornar_ola_mundo(client):
     """
 
     """arrange:"""
-    """client oriundo do pytest"""
+    """client oriundo do pytest, em conftest.py"""
 
     """act:"""
     response = client.get('/')
@@ -60,11 +60,7 @@ def test_read_users(client):
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'users': [
-            {
-                'id': 1,
-                'email': 'alice@example.com',
-                'username': 'alice'
-            },
+            {'id': 1, 'email': 'alice@example.com', 'username': 'alice'},
         ]
     }
 
@@ -75,19 +71,19 @@ def test_update_user(client):
 
     """act:"""
     response = client.put(
-                    '/users/1',
-                    json={
-                        'username': 'bob',
-                        'email': 'bob@example.com',
-                        'password': 'secret'
-                    }
+        '/users/1',
+        json={
+            'username': 'bob',
+            'email': 'bob@example.com',
+            'password': 'secret',
+        },
     )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'username': 'bob',
         'email': 'bob@example.com',
-        'id': 1
+        'id': 1,
     }
 
 
@@ -98,5 +94,60 @@ def test_delete_user(client):
     assert response.json() == {
         'username': 'bob',
         'email': 'bob@example.com',
-        'id': 1
+        'id': 1,
     }
+
+
+def test_aula3_update_user_com_404(client):
+    """arrange:"""
+    """client oriundo do pytest"""
+
+    """act:"""
+    response = client.put(
+        '/users/1',
+        json={
+            'username': 'bob',
+            'email': 'bob@example.com',
+            'password': 'secret',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found!'}
+
+
+def test_aula3_delete_user_com_404(client):
+    """arrange:"""
+    """client oriundo do pytest"""
+
+    """act:"""
+    response = client.delete('/users/1')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found!'}
+
+
+"""def test_read_user_exercicio_aula03_200(client):
+    arrange:
+    client oriundo do pytest
+
+	act
+    response = client.get('/users/1')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'bob',
+        'email': 'bob@example.com',
+        'id': 1,
+    }"""
+
+
+def test_read_user_exercicio_aula03_404(client):
+    """arrange:"""
+    """client oriundo do pytest"""
+
+    """act:"""
+    response = client.get('/users/999')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found!'}
